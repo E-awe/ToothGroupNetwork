@@ -1,6 +1,7 @@
 import yaml
 from easydict import EasyDict
 import os
+import shutil
 from .logger import print_log
 
 def log_args_to_file(args, logger, file_name):
@@ -61,5 +62,5 @@ def get_config(args, logger=None):
 
 def save_experiment_config(args, config, logger = None):
     config_path = os.path.join(args.experiment_path, 'config.yaml')
-    os.system('cp %s %s' % (args.config, config_path))
+    shutil.copy2(args.config, config_path)
     logger.info(f'Copy the Config file from {args.config} to {config_path}')

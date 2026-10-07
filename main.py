@@ -5,6 +5,7 @@ from loguru import logger
 import argparse
 import time
 import os
+from pathlib import Path
 import torch
 from tensorboardX import SummaryWriter
 from datasets import *
@@ -29,6 +30,10 @@ def get_args():
     parser.add_argument('--exp_name', type = str, required=True)
     parser.add_argument('--ckpts', type = str, default='')
     parser.add_argument('--encoder_ckpts', type = str, default='')
+    parser.add_argument('--case_root', type=str, default=None,
+                        help='Existing case_0 directory for checkpoint-free smoke test (default: ./case_0)')
+    parser.add_argument('--device', choices=['cuda', 'cpu'], default='cuda',
+                        help='Test device; CPU is for compatibility checks only')
     parser.add_argument('--resume', action='store_true')
     parser.add_argument('--val_freq', type = int, default=1, help = 'test freq')
     parser.add_argument(

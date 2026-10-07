@@ -12,7 +12,7 @@ from utils.builder import DATASETS
 import copy
 import open3d as o3d
 from utils.pointcloud import read_pointcloud
-from pytorch3d.transforms import matrix_to_rotation_6d
+from utils.rotation6d import matrix_to_rotation_6d
 
 def  randomize_mesh_orientation(mesh: trimesh.Trimesh):
     mesh1 = copy.deepcopy(mesh)

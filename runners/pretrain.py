@@ -5,7 +5,6 @@ from utils import misc, dist_utils
 import time
 from utils.logger import *
 from utils.AverageMeter import AverageMeter
-from pytorch3d.loss import chamfer_distance
 from models.MeshMAE import Mesh_mae
 
 import numpy as np

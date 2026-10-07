@@ -4,7 +4,11 @@ import torch.nn.functional as F
 from einops import repeat
 from einops import rearrange, repeat
 from einops.layers.torch import Rearrange
-from chamfer_dist import ChamferDistanceL1
+try:
+    from chamfer_dist import ChamferDistanceL1
+except (ImportError, OSError) as error:
+    ChamferDistanceL1 = None
+    _CHAMFER_IMPORT_ERROR = error
 import copy
 import numpy as np
 import math
@@ -20,6 +24,12 @@ class Mesh_mae(nn.Module):
                  decoder_num_heads=16, decoder_depth=6, decoder_embed_dim=512,
                  patch_size=64, norm_layer=nn.LayerNorm, weight=0.5):
         super(Mesh_mae, self).__init__()
+        if ChamferDistanceL1 is None:
+            raise RuntimeError(
+                'Mesh_mae pretraining requires the compiled chamfer extension. '
+                'Install/build chamfer_dist for pretraining. Mesh_encoder and '
+                'TADPM inference do not require this extension.'
+            ) from _CHAMFER_IMPORT_ERROR
         patch_dim = channels
         self.num_patches = 256
         self.weight = weight
@@ -253,7 +263,7 @@ class Mesh_encoder(nn.Module):
             tokens = blk(tokens)
 
         x = self.norm(tokens)
-        zero_tokens = torch.zeros((batch, 256 - num_patches, self.dim), dtype=torch.float32).cuda()
+        zero_tokens = torch.zeros((batch, 256 - num_patches, self.dim), dtype=torch.float32, device=x.device)
         tokens = torch.cat((x, zero_tokens), dim=1)
         tokens = self.max_pooling2(tokens).squeeze(1)
         return tokens

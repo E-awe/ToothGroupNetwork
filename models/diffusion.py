@@ -25,7 +25,7 @@ def cosine_beta_schedule(timesteps, s=0.008):
     alphas_cumprod = torch.cos(((x / timesteps) + s) / (1 + s) * math.pi * 0.5) ** 2
     alphas_cumprod = alphas_cumprod / alphas_cumprod[0]
     betas = 1 - (alphas_cumprod[1:] / alphas_cumprod[:-1])
-    return torch.clip(betas, 0, 0.999).to('cuda')
+    return torch.clip(betas, 0, 0.999)
 
 def extract(a, t, x_shape):
     """extract the appropriate  t  index for a batch of indices"""
@@ -44,14 +44,15 @@ class diffusion(nn.Module):
         self.in_features = in_features
         self.timesteps = timesteps
         self.sampling_timesteps = sampling_timesteps
-        self.betas = cosine_beta_schedule(self.timesteps).cuda()
-        self.alphas = 1. - self.betas
-        self.alphas_cumprod = torch.cumprod(self.alphas, dim=0)
+        # Non-persistent buffers follow model.to(device) without adding checkpoint keys.
+        self.register_buffer('betas', cosine_beta_schedule(self.timesteps), persistent=False)
+        self.register_buffer('alphas', 1. - self.betas, persistent=False)
+        self.register_buffer('alphas_cumprod', torch.cumprod(self.alphas, dim=0), persistent=False)
         self.model = UViT()
         self.eta = eta
-        self.sqrt_alphas_cumprod =  torch.sqrt(self.alphas_cumprod)
-        self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1-self.alphas_cumprod)
-        self.sqrt_recip_alphas_cumprod = torch.sqrt(1. / self.alphas_cumprod)
+        self.register_buffer('sqrt_alphas_cumprod', torch.sqrt(self.alphas_cumprod), persistent=False)
+        self.register_buffer('sqrt_one_minus_alphas_cumprod', torch.sqrt(1-self.alphas_cumprod), persistent=False)
+        self.register_buffer('sqrt_recip_alphas_cumprod', torch.sqrt(1. / self.alphas_cumprod), persistent=False)
         assert self.sampling_timesteps <= self.timesteps
     
     def set_device(self,device):
@@ -60,7 +61,7 @@ class diffusion(nn.Module):
     # forward diffusion
     def q_sample(self, x_start, t, noise=None):
         if noise is None:
-            noise = torch.randn_like(x_start).to(torch.float32).cuda()
+            noise = torch.randn_like(x_start).to(torch.float32)
         sqrt_alphas_cumprod_t = extract(self.sqrt_alphas_cumprod.to(t.device), t, x_start.shape)
         sqrt_one_minus_alphas_cumprod_t = extract(self.sqrt_one_minus_alphas_cumprod.to(t.device), t, x_start.shape)
         return sqrt_alphas_cumprod_t * x_start + sqrt_one_minus_alphas_cumprod_t * noise
@@ -80,14 +81,14 @@ class diffusion(nn.Module):
                    )
 
         # x = torch.randn(shape)
-        x = torch.randn(shape).cuda()
+        x = torch.randn(shape).to(features.device)
         seq_next = [-1] + list(seq[:-1])
         x0_preds = []
         xs = [x]
 
         for i, j in zip(reversed(seq), reversed(seq_next)):
-            t = (torch.ones(batch) * i).cuda()
-            next_t = (torch.ones(batch) * j).cuda()
+            t = (torch.ones(batch) * i).to(features.device)
+            next_t = (torch.ones(batch) * j).to(features.device)
             at = compute_alpha(self.betas.to(t.device), t.long())
             at_next = compute_alpha(self.betas.to(t.device), next_t.long())
             xt = xs[-1].to(torch.float32)
@@ -113,9 +114,9 @@ class diffusion(nn.Module):
         else:
             bs = batched_inputs.shape[0]
             t = [torch.randint(0, 1000 , (1,)).long() for _ in range(bs)]
-            t = torch.stack(t).squeeze(-1).cuda()
+            t = torch.stack(t).squeeze(-1).to(features.device)
             batched_inputs = batched_inputs     # [bs,32,6]
-            noise = torch.randn_like(batched_inputs).cuda()
+            noise = torch.randn_like(batched_inputs)
             x_t = self.q_sample(batched_inputs,t,noise)
             x_t = x_t.to(torch.float32)
             predicted= self.model(x_t,t,features)

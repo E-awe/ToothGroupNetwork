@@ -1,0 +1,11 @@
+{
+  "official_base_commit": "92967a68191846ab38dcdb2ae7914e19ecd0d396",
+  "unit_tests_passed": 4,
+  "native_imports_passed": true,
+  "full_real_case_cpu_forward_passed": true,
+  "ddim_steps": 100,
+  "windows_cuda_test_executed": false,
+  "checkpoint_tested": null,
+  "existing_input_zip_sha256": "9d53de0eea7d43c5c755d5c9c8ddf9f56664df45edac6792eca472d73f7f41b4",
+  "input_data_regenerated": false
+}

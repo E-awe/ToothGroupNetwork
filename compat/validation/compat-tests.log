@@ -1,0 +1,24 @@
+test_ddim_matches_official_reference_and_state_keys (test_windows_smoke_compat.DiffusionTests.test_ddim_matches_official_reference_and_state_keys) ... /workspace/toothgroup-environment/venv/lib/python3.12/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/open3d/__init__.py:80: ImportWarning: Open3D was built with CUDA support, but no suitable CUDA devices found. If your system has CUDA devices, check your CUDA drivers and runtime.
+  warnings.warn(
+/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  prop = Group((name + Suppress("=") + comma_separated(value)) | oneOf(_CONSTANTS))
+/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+  parse = parser.parseString(pattern)
+/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+  parser.resetCache()
+/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+  ParserElement.enablePackrat()
+In /workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/mpl-data/stylelib/classic.mplstyle: 'parseString' deprecated - use 'parse_string'
+In /workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/mpl-data/stylelib/classic.mplstyle: 'resetCache' deprecated - use 'reset_cache'
+ok
+test_autograd (test_windows_smoke_compat.RotationTests.test_autograd) ... ok
+test_rows_batch_dtype_and_roundtrip (test_windows_smoke_compat.RotationTests.test_rows_batch_dtype_and_roundtrip) ... ok
+test_main_without_pytorch3d_or_chamfer (test_windows_smoke_compat.StartupTests.test_main_without_pytorch3d_or_chamfer) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 20.763s
+
+OK
+xformers disabled

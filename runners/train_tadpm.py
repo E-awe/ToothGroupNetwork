@@ -5,13 +5,11 @@ from utils import misc, dist_utils
 import time
 from utils.logger import *
 from utils.AverageMeter import AverageMeter
-from pytorch3d.loss import chamfer_distance
 from einops import rearrange
 from torch import autograd
 
 import numpy as np
-from torchvision import transforms
-from pytorch3d.transforms import rotation_6d_to_matrix
+from utils.rotation6d import rotation_6d_to_matrix
 
 def robust_compute_rotation_matrix_from_ortho6d(poses):
     """
