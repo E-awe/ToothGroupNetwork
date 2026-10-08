@@ -1,0 +1,267 @@
+{
+  "case_id": "CASE0001",
+  "clinical_confirmation": false,
+  "status": "3d_review_candidate_pending_clinical_confirmation",
+  "changes": [
+    {
+      "jaw": "lower",
+      "component": "C11",
+      "original_prediction_fdi": 43,
+      "reviewed_candidate_fdi": 44,
+      "reason": "User-requested 3D arch review candidate correction; clinical record confirmation pending."
+    },
+    {
+      "jaw": "lower",
+      "component": "C12",
+      "original_prediction_fdi": 44,
+      "reviewed_candidate_fdi": 45,
+      "reason": "User-requested 3D arch review candidate correction; clinical record confirmation pending."
+    }
+  ],
+  "jaws": {
+    "upper": {
+      "vertices": 42152,
+      "faces": 84248,
+      "tooth_components": 13,
+      "source_to_model_matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "model_to_source_matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -1.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          -1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "geometry_preserved": true,
+      "vertex_order_preserved": true,
+      "raw_prediction_json_preserved": true,
+      "reviewed_mapping": {
+        "C1": 17,
+        "C2": 16,
+        "C3": 14,
+        "C4": 13,
+        "C5": 12,
+        "C6": 11,
+        "C7": 21,
+        "C8": 22,
+        "C9": 23,
+        "C10": 24,
+        "C11": 25,
+        "C12": 26,
+        "C13": 27,
+        "C14": 0
+      },
+      "changed_candidate_vertices": 0
+    },
+    "lower": {
+      "vertices": 39849,
+      "faces": 79638,
+      "tooth_components": 14,
+      "source_to_model_matrix": [
+        [
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "model_to_source_matrix": [
+        [
+          -1.0,
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          -1.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "geometry_preserved": true,
+      "vertex_order_preserved": true,
+      "raw_prediction_json_preserved": true,
+      "reviewed_mapping": {
+        "C1": 37,
+        "C2": 36,
+        "C3": 35,
+        "C4": 34,
+        "C5": 33,
+        "C6": 32,
+        "C7": 31,
+        "C8": 41,
+        "C9": 42,
+        "C10": 43,
+        "C11": 44,
+        "C12": 45,
+        "C13": 46,
+        "C14": 47,
+        "C15": 0
+      },
+      "changed_candidate_vertices": 4438
+    }
+  },
+  "missing_position_candidates": [
+    {
+      "jaw": "upper",
+      "fdi": 15
+    }
+  ],
+  "patient_left_right_policy": "Retain user-adopted CSV candidate convention; do not use mirror columns",
+  "ply_semantics": "Component-level uniform candidate colors; not a replacement vertex segmentation JSON",
+  "plot_coordinates": "Existing model coordinates and existing review camera; source-coordinate PLYs retained separately",
+  "source_file_sha256_before": {
+    "initial_upper_inspect.ply": "788f48edf2c10ec724d34ea1c15e830f9e6ba655cf2a9fb798349c125a7ec0c3",
+    "upper_predicted_source_coords.ply": "952494827e58752addd9a0972dae48c5886b2ad43f4d1eef6f27960f985ad6ed",
+    "lower_vertex_components.npy": "a0748fd96379677ec9d093669a7fb93060105eae27d75484a888c3ba10ff4b57",
+    "lower_predicted_model_coords.ply": "a46aa2731c42f8ffaac5d71804ab8aaca1e8b2c33df3d9a45cfafdd99431abf1",
+    "inference_timing.json": "7568e10a3d82056f30084da74bb00e293451af81a38a7cfe4e0b89be8e018787",
+    "lower_predicted_source_coords.ply": "7538ea6d4de7c29d043289ab72fe8adf85465f06245c00e78d7a2a764032b4ce",
+    "source_components.png": "d331926640a1fa8f0bd6ec7ecba42b64cf90b5f9f44584005df9e2e9bf53955a",
+    "prediction_audit.png": "65cfc1f2032ada121570c9db9197633df7867409263276ba4cca65634e5d02e8",
+    "source_geometry.json": "07857e696ef93afa8a96423878e8b700d31e87d5ae2011134956db88dd874423",
+    "lower_review.html": "517f464e905e36f3030a7cbda7111d2cfc7b43905f3972b4fefbbc5f5916e60a",
+    "upper_review.html": "29d7f2919ad33ea17ceefe851825e06a0512e6f1dfa90cf6d4519dcb1c421d66",
+    "upper_vertex_components.npy": "e8327cf15585126cc993d73c8d3a2368db316d53cef96bd2c388ae009b3ac9de",
+    "input_manifest.json": "2b26cf50762bbddab7bfa6115b14eb76304efdd538ceeb41b4b5d417d5c6e5eb",
+    "initial_lower_inspect.ply": "b3091d76c7619802de7d0fb5a74ff63f83283be95cf2086bd921e7d8451ccec4",
+    "upper_predicted_model_coords.ply": "2a9b7792c1754c06f6cf7012735b148c8000aa56beb79f66c7f39147adb016d2",
+    "checkpoint_manifest.json": "e265defad0642a3185ca50b9434d17ad923d27696e42c091317affbeea561037",
+    "component_fdi_candidates.csv": "f25f291fef557745db0baab633638e71b794a8fe8250bb88cd0d114cbe9a0774",
+    "prediction_review_top.png": "447a8a4e50370944d3accd188dbef80c5a80bca184262c9451526c43e1983a59",
+    "component_fdi_candidates.json": "0289959bc2210267cf8ae8bd20cbc4d527db4657ac7f5fce8376d2849350c692",
+    "predictions/CASE0001_lower.json": "4d9e2de62a1ea3a9b0fc3003f95f3e8e23d92d1fb61e59f647a5bbbc03ae59cf",
+    "predictions/CASE0001_upper.json": "fc356b4458cfa25d9b874a871fb528de91d330590f0d01591cae11620b43d588",
+    "input/CASE0001/CASE0001_lower.obj": "1d27e1d0ede05ac61ad132bba1501adc77464ef076b466087b438881580244b2",
+    "input/CASE0001/CASE0001_upper.obj": "743f46a1eeeb152f13b2edd1d8e54e2d0b2d1621d7ce74725707fd2e337c5204"
+  },
+  "all_source_files_unchanged": true,
+  "source_file_sha256_after": {
+    "initial_upper_inspect.ply": "788f48edf2c10ec724d34ea1c15e830f9e6ba655cf2a9fb798349c125a7ec0c3",
+    "upper_predicted_source_coords.ply": "952494827e58752addd9a0972dae48c5886b2ad43f4d1eef6f27960f985ad6ed",
+    "lower_vertex_components.npy": "a0748fd96379677ec9d093669a7fb93060105eae27d75484a888c3ba10ff4b57",
+    "lower_predicted_model_coords.ply": "a46aa2731c42f8ffaac5d71804ab8aaca1e8b2c33df3d9a45cfafdd99431abf1",
+    "inference_timing.json": "7568e10a3d82056f30084da74bb00e293451af81a38a7cfe4e0b89be8e018787",
+    "lower_predicted_source_coords.ply": "7538ea6d4de7c29d043289ab72fe8adf85465f06245c00e78d7a2a764032b4ce",
+    "source_components.png": "d331926640a1fa8f0bd6ec7ecba42b64cf90b5f9f44584005df9e2e9bf53955a",
+    "prediction_audit.png": "65cfc1f2032ada121570c9db9197633df7867409263276ba4cca65634e5d02e8",
+    "source_geometry.json": "07857e696ef93afa8a96423878e8b700d31e87d5ae2011134956db88dd874423",
+    "lower_review.html": "517f464e905e36f3030a7cbda7111d2cfc7b43905f3972b4fefbbc5f5916e60a",
+    "upper_review.html": "29d7f2919ad33ea17ceefe851825e06a0512e6f1dfa90cf6d4519dcb1c421d66",
+    "upper_vertex_components.npy": "e8327cf15585126cc993d73c8d3a2368db316d53cef96bd2c388ae009b3ac9de",
+    "input_manifest.json": "2b26cf50762bbddab7bfa6115b14eb76304efdd538ceeb41b4b5d417d5c6e5eb",
+    "initial_lower_inspect.ply": "b3091d76c7619802de7d0fb5a74ff63f83283be95cf2086bd921e7d8451ccec4",
+    "upper_predicted_model_coords.ply": "2a9b7792c1754c06f6cf7012735b148c8000aa56beb79f66c7f39147adb016d2",
+    "checkpoint_manifest.json": "e265defad0642a3185ca50b9434d17ad923d27696e42c091317affbeea561037",
+    "component_fdi_candidates.csv": "f25f291fef557745db0baab633638e71b794a8fe8250bb88cd0d114cbe9a0774",
+    "prediction_review_top.png": "447a8a4e50370944d3accd188dbef80c5a80bca184262c9451526c43e1983a59",
+    "component_fdi_candidates.json": "0289959bc2210267cf8ae8bd20cbc4d527db4657ac7f5fce8376d2849350c692",
+    "predictions/CASE0001_lower.json": "4d9e2de62a1ea3a9b0fc3003f95f3e8e23d92d1fb61e59f647a5bbbc03ae59cf",
+    "predictions/CASE0001_upper.json": "fc356b4458cfa25d9b874a871fb528de91d330590f0d01591cae11620b43d588",
+    "input/CASE0001/CASE0001_lower.obj": "1d27e1d0ede05ac61ad132bba1501adc77464ef076b466087b438881580244b2",
+    "input/CASE0001/CASE0001_upper.obj": "743f46a1eeeb152f13b2edd1d8e54e2d0b2d1621d7ce74725707fd2e337c5204"
+  },
+  "output_file_sha256": {
+    "lower_original_vertex_prediction.ply": "ae738a1a4f9cd768358f69b731fe7556c25eaa7b73783ca35dbc8e1f4bad68f0",
+    "upper_reviewed_colored.ply": "eb17cf7817aa432ef206b79b2eddddcc7b3d67924f829c7e48f0ece29127cca9",
+    "lower_vertex_components.npy": "a0748fd96379677ec9d093669a7fb93060105eae27d75484a888c3ba10ff4b57",
+    "build_review.py": "6b675e117c3255161fdc35ce737537a1c587032ad5e7d661acedfd3e9f9b4602",
+    "upper_original_vertex_prediction.ply": "03364848d79c9221d95857c922a5867391758446f8e64f897ad04fdd199c6d64",
+    "lower_original_component_candidates.ply": "4fa98b8432dbda79d54e496b91a5c71f93c42e7d0285ecdc7f3771d39ea2f75d",
+    "lower_reviewed_model_coords.ply": "9dc562c2c899463f2d20d8cf037a015dc184321e954f3d2f8d61de02b0db64bd",
+    "lower_reviewed_component_candidates.npz": "323672bde284623e5568623eb376eaa64788572417f81080b08bceaaea153f9e",
+    "changed_components.csv": "80e047d0a1f88f1742c142ce1f32211754a8dffc29ad2c43415fa3fa480b79e9",
+    "lower_reviewed_colored.ply": "68ac6e7a123a0d9693a00c391585a05b2022b7591858915106bdd2bcac16b048",
+    "lower_reviewed_comparison.html": "f7d385f8bd22ace591cdc54a8cc49a88a155aafc7125873e72f49fd52a2d24a0",
+    "lower_numbered_comparison.png": "27e86f0f8480d93a18e8f1d0b0c25b5a83476b3cb49a13f65d96bedb3ebb44a9",
+    "original_vs_reviewed_comparison.csv": "01a11b715c49a2d214f807950bd763df13f04b0b14f456e7996894f247e68da9",
+    "upper_vertex_components.npy": "e8327cf15585126cc993d73c8d3a2368db316d53cef96bd2c388ae009b3ac9de",
+    "reviewed_component_fdi.csv": "01a11b715c49a2d214f807950bd763df13f04b0b14f456e7996894f247e68da9",
+    "upper_reviewed_model_coords.ply": "aed40e24eab917d09eef37785265e082e8830277b29d1d7918853e13c36a4fa5",
+    "upper_reviewed_comparison.html": "795f51b16d5750368bede436588e8acfc19312a731ed694adf4c65e73f1fd2e6",
+    "README.zh-CN.md": "20cfc20f6d1dc0b4e8269962e67586e1170982b4536ebbd98d8b514d940c0eae",
+    "upper_reviewed_component_candidates.npz": "688579343d22038b1ef4012a6bc2972e1fea6cb57991dc62365b64dff0a2ba4e",
+    "upper_original_component_candidates.ply": "eb17cf7817aa432ef206b79b2eddddcc7b3d67924f829c7e48f0ece29127cca9",
+    "upper_numbered_comparison.png": "2997fdabb0026aae3f12aa643cf2e6b692bb7c80d9e039a23ec3973a4c3c38f9",
+    "original_reference/source_geometry.json": "07857e696ef93afa8a96423878e8b700d31e87d5ae2011134956db88dd874423",
+    "original_reference/input_manifest.json": "2b26cf50762bbddab7bfa6115b14eb76304efdd538ceeb41b4b5d417d5c6e5eb",
+    "original_reference/component_fdi_candidates.csv": "f25f291fef557745db0baab633638e71b794a8fe8250bb88cd0d114cbe9a0774",
+    "original_reference/predictions/CASE0001_lower.json": "4d9e2de62a1ea3a9b0fc3003f95f3e8e23d92d1fb61e59f647a5bbbc03ae59cf",
+    "original_reference/predictions/CASE0001_upper.json": "fc356b4458cfa25d9b874a871fb528de91d330590f0d01591cae11620b43d588"
+  },
+  "component_color_is_not_raw_vertex_segmentation": true
+}
