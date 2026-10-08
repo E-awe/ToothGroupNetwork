@@ -1,0 +1,712 @@
+{
+  "case_name": "CASE0001",
+  "dataset_id": 1,
+  "teeth": [
+    {
+      "jaw": "upper",
+      "component": "C1",
+      "slot": 1,
+      "fdi_candidate": 17,
+      "original_prediction_fdi": 17,
+      "clinical_confirmed": false,
+      "source_component_vertices": 4221,
+      "source_faces": 8438,
+      "before_centroid": [
+        0.6429836991166341,
+        -0.449972337190221,
+        0.11445041167663943
+      ],
+      "seed": 2059,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C2",
+      "slot": 2,
+      "fdi_candidate": 16,
+      "original_prediction_fdi": 16,
+      "clinical_confirmed": false,
+      "source_component_vertices": 3798,
+      "source_faces": 7592,
+      "before_centroid": [
+        0.5446973546328557,
+        -0.2202057293151965,
+        0.07432003667995188
+      ],
+      "seed": 2060,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C3",
+      "slot": 4,
+      "fdi_candidate": 14,
+      "original_prediction_fdi": 14,
+      "clinical_confirmed": false,
+      "source_component_vertices": 3121,
+      "source_faces": 6238,
+      "before_centroid": [
+        0.44084849855419345,
+        0.12669171865761347,
+        0.08972945404730642
+      ],
+      "seed": 2062,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C4",
+      "slot": 5,
+      "fdi_candidate": 13,
+      "original_prediction_fdi": 13,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2410,
+      "source_faces": 4816,
+      "before_centroid": [
+        0.40248101298849054,
+        0.32021906044397996,
+        0.10907053453791932
+      ],
+      "seed": 2063,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C5",
+      "slot": 6,
+      "fdi_candidate": 12,
+      "original_prediction_fdi": 12,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1923,
+      "source_faces": 3842,
+      "before_centroid": [
+        0.24793941088848115,
+        0.41898431060440217,
+        0.08344580915739906
+      ],
+      "seed": 2064,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C6",
+      "slot": 7,
+      "fdi_candidate": 11,
+      "original_prediction_fdi": 11,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2582,
+      "source_faces": 5160,
+      "before_centroid": [
+        0.11688361462424003,
+        0.5134446407638661,
+        0.08070147156827356
+      ],
+      "seed": 2065,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C7",
+      "slot": 8,
+      "fdi_candidate": 21,
+      "original_prediction_fdi": 21,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2591,
+      "source_faces": 5178,
+      "before_centroid": [
+        -0.07679801679954826,
+        0.5030462132761806,
+        0.06337347847667762
+      ],
+      "seed": 2066,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C8",
+      "slot": 9,
+      "fdi_candidate": 22,
+      "original_prediction_fdi": 22,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1968,
+      "source_faces": 3932,
+      "before_centroid": [
+        -0.2533262609101858,
+        0.44029642183082,
+        0.07557357547178961
+      ],
+      "seed": 2067,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C9",
+      "slot": 10,
+      "fdi_candidate": 23,
+      "original_prediction_fdi": 23,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2385,
+      "source_faces": 4766,
+      "before_centroid": [
+        -0.3997358690614453,
+        0.32917094722766793,
+        0.07623656261791939
+      ],
+      "seed": 2068,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C10",
+      "slot": 11,
+      "fdi_candidate": 24,
+      "original_prediction_fdi": 24,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2804,
+      "source_faces": 5604,
+      "before_centroid": [
+        -0.4284739029448206,
+        0.142536913039665,
+        0.053754259800965376
+      ],
+      "seed": 2069,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C11",
+      "slot": 12,
+      "fdi_candidate": 25,
+      "original_prediction_fdi": 25,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2441,
+      "source_faces": 4878,
+      "before_centroid": [
+        -0.416108081202367,
+        -0.04482323268099277,
+        0.0767790794068499
+      ],
+      "seed": 2070,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C12",
+      "slot": 13,
+      "fdi_candidate": 26,
+      "original_prediction_fdi": 26,
+      "clinical_confirmed": false,
+      "source_component_vertices": 3912,
+      "source_faces": 7820,
+      "before_centroid": [
+        -0.5191902382065191,
+        -0.22227574066289577,
+        0.0974523154124942
+      ],
+      "seed": 2071,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "upper",
+      "component": "C13",
+      "slot": 14,
+      "fdi_candidate": 27,
+      "original_prediction_fdi": 27,
+      "clinical_confirmed": false,
+      "source_component_vertices": 4040,
+      "source_faces": 8076,
+      "before_centroid": [
+        -0.6252256847894553,
+        -0.4485679115458634,
+        0.13439735746132703
+      ],
+      "seed": 2072,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C1",
+      "slot": 30,
+      "fdi_candidate": 37,
+      "original_prediction_fdi": 37,
+      "clinical_confirmed": false,
+      "source_component_vertices": 4075,
+      "source_faces": 8146,
+      "before_centroid": [
+        -0.5861957480891715,
+        -0.43526629548860046,
+        -0.07768140256719318
+      ],
+      "seed": 2088,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C2",
+      "slot": 29,
+      "fdi_candidate": 36,
+      "original_prediction_fdi": 36,
+      "clinical_confirmed": false,
+      "source_component_vertices": 3949,
+      "source_faces": 7894,
+      "before_centroid": [
+        -0.45934783524033423,
+        -0.18684741253893145,
+        -0.07637267082498193
+      ],
+      "seed": 2087,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C3",
+      "slot": 28,
+      "fdi_candidate": 35,
+      "original_prediction_fdi": 35,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2308,
+      "source_faces": 4612,
+      "before_centroid": [
+        -0.4171431597876319,
+        0.041268176171769484,
+        -0.10570637248506178
+      ],
+      "seed": 2086,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C4",
+      "slot": 27,
+      "fdi_candidate": 34,
+      "original_prediction_fdi": 34,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2292,
+      "source_faces": 4580,
+      "before_centroid": [
+        -0.3914888067688569,
+        0.22137911457691656,
+        -0.12474745964981591
+      ],
+      "seed": 2085,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C5",
+      "slot": 26,
+      "fdi_candidate": 33,
+      "original_prediction_fdi": 33,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2074,
+      "source_faces": 4144,
+      "before_centroid": [
+        -0.2761854279027892,
+        0.3546985395077907,
+        -0.13062514964585434
+      ],
+      "seed": 2084,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C6",
+      "slot": 25,
+      "fdi_candidate": 32,
+      "original_prediction_fdi": 32,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1700,
+      "source_faces": 3396,
+      "before_centroid": [
+        -0.14049978511556876,
+        0.4189051884081075,
+        -0.11814327231161055
+      ],
+      "seed": 2083,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C7",
+      "slot": 24,
+      "fdi_candidate": 31,
+      "original_prediction_fdi": 31,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1578,
+      "source_faces": 3152,
+      "before_centroid": [
+        -0.013015698019552447,
+        0.3978038948968694,
+        -0.09892652688884357
+      ],
+      "seed": 2082,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C8",
+      "slot": 23,
+      "fdi_candidate": 41,
+      "original_prediction_fdi": 41,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1474,
+      "source_faces": 2944,
+      "before_centroid": [
+        0.11430172287596621,
+        0.429489161747623,
+        -0.10620790945698468
+      ],
+      "seed": 2081,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C9",
+      "slot": 22,
+      "fdi_candidate": 42,
+      "original_prediction_fdi": 42,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1722,
+      "source_faces": 3440,
+      "before_centroid": [
+        0.20808589824965512,
+        0.34687636466910554,
+        -0.08677162702243685
+      ],
+      "seed": 2080,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C10",
+      "slot": 21,
+      "fdi_candidate": 43,
+      "original_prediction_fdi": 43,
+      "clinical_confirmed": false,
+      "source_component_vertices": 1977,
+      "source_faces": 3950,
+      "before_centroid": [
+        0.33828879259055117,
+        0.38042304974553104,
+        -0.1306023987029467
+      ],
+      "seed": 2079,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C11",
+      "slot": 20,
+      "fdi_candidate": 44,
+      "original_prediction_fdi": 43,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2184,
+      "source_faces": 4364,
+      "before_centroid": [
+        0.38339401408390483,
+        0.22083194394031522,
+        -0.08872308344943877
+      ],
+      "seed": 2078,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C12",
+      "slot": 19,
+      "fdi_candidate": 45,
+      "original_prediction_fdi": 44,
+      "clinical_confirmed": false,
+      "source_component_vertices": 2254,
+      "source_faces": 4504,
+      "before_centroid": [
+        0.39110594550271593,
+        0.0380495656843779,
+        -0.0853102376148204
+      ],
+      "seed": 2077,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C13",
+      "slot": 18,
+      "fdi_candidate": 46,
+      "original_prediction_fdi": 46,
+      "clinical_confirmed": false,
+      "source_component_vertices": 3972,
+      "source_faces": 7940,
+      "before_centroid": [
+        0.4636729961625386,
+        -0.17404205263449085,
+        -0.09101335678974046
+      ],
+      "seed": 2076,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    },
+    {
+      "jaw": "lower",
+      "component": "C14",
+      "slot": 17,
+      "fdi_candidate": 47,
+      "original_prediction_fdi": 47,
+      "clinical_confirmed": false,
+      "source_component_vertices": 4034,
+      "source_faces": 8064,
+      "before_centroid": [
+        0.5036914698377871,
+        -0.44533415008428406,
+        -0.12604029383690993
+      ],
+      "seed": 2075,
+      "preprocessing": "fresh_this_case_geometry_FPS512_QEM256_official_MAPS_depth3",
+      "reused_historical_geometry": false
+    }
+  ],
+  "backgrounds": [
+    {
+      "jaw": "upper",
+      "component": "C14",
+      "vertices": 3956
+    },
+    {
+      "jaw": "lower",
+      "component": "C15",
+      "vertices": 4256
+    }
+  ],
+  "mask": [
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    0
+  ],
+  "empty_slots": [
+    0,
+    3,
+    15,
+    16,
+    31
+  ],
+  "unrepresented_fdi": [
+    18,
+    15,
+    28,
+    48,
+    38
+  ],
+  "source_file_sha256": {
+    "initial_upper_inspect.ply": "788f48edf2c10ec724d34ea1c15e830f9e6ba655cf2a9fb798349c125a7ec0c3",
+    "upper_predicted_source_coords.ply": "952494827e58752addd9a0972dae48c5886b2ad43f4d1eef6f27960f985ad6ed",
+    "lower_vertex_components.npy": "a0748fd96379677ec9d093669a7fb93060105eae27d75484a888c3ba10ff4b57",
+    "lower_predicted_model_coords.ply": "a46aa2731c42f8ffaac5d71804ab8aaca1e8b2c33df3d9a45cfafdd99431abf1",
+    "inference_timing.json": "7568e10a3d82056f30084da74bb00e293451af81a38a7cfe4e0b89be8e018787",
+    "lower_predicted_source_coords.ply": "7538ea6d4de7c29d043289ab72fe8adf85465f06245c00e78d7a2a764032b4ce",
+    "source_components.png": "d331926640a1fa8f0bd6ec7ecba42b64cf90b5f9f44584005df9e2e9bf53955a",
+    "prediction_audit.png": "65cfc1f2032ada121570c9db9197633df7867409263276ba4cca65634e5d02e8",
+    "source_geometry.json": "07857e696ef93afa8a96423878e8b700d31e87d5ae2011134956db88dd874423",
+    "lower_review.html": "517f464e905e36f3030a7cbda7111d2cfc7b43905f3972b4fefbbc5f5916e60a",
+    "upper_review.html": "29d7f2919ad33ea17ceefe851825e06a0512e6f1dfa90cf6d4519dcb1c421d66",
+    "upper_vertex_components.npy": "e8327cf15585126cc993d73c8d3a2368db316d53cef96bd2c388ae009b3ac9de",
+    "input_manifest.json": "2b26cf50762bbddab7bfa6115b14eb76304efdd538ceeb41b4b5d417d5c6e5eb",
+    "initial_lower_inspect.ply": "b3091d76c7619802de7d0fb5a74ff63f83283be95cf2086bd921e7d8451ccec4",
+    "upper_predicted_model_coords.ply": "2a9b7792c1754c06f6cf7012735b148c8000aa56beb79f66c7f39147adb016d2",
+    "checkpoint_manifest.json": "e265defad0642a3185ca50b9434d17ad923d27696e42c091317affbeea561037",
+    "component_fdi_candidates.csv": "f25f291fef557745db0baab633638e71b794a8fe8250bb88cd0d114cbe9a0774",
+    "prediction_review_top.png": "447a8a4e50370944d3accd188dbef80c5a80bca184262c9451526c43e1983a59",
+    "component_fdi_candidates.json": "0289959bc2210267cf8ae8bd20cbc4d527db4657ac7f5fce8376d2849350c692",
+    "predictions/CASE0001_lower.json": "4d9e2de62a1ea3a9b0fc3003f95f3e8e23d92d1fb61e59f647a5bbbc03ae59cf",
+    "predictions/CASE0001_upper.json": "fc356b4458cfa25d9b874a871fb528de91d330590f0d01591cae11620b43d588",
+    "input/CASE0001/CASE0001_lower.obj": "1d27e1d0ede05ac61ad132bba1501adc77464ef076b466087b438881580244b2",
+    "input/CASE0001/CASE0001_upper.obj": "743f46a1eeeb152f13b2edd1d8e54e2d0b2d1621d7ce74725707fd2e337c5204"
+  },
+  "reviewed_mapping_sha256": "01a11b715c49a2d214f807950bd763df13f04b0b14f456e7996894f247e68da9",
+  "original_files_unchanged": true,
+  "clinical_confirmed": false,
+  "after_files_created": false,
+  "after_data_used": false,
+  "gt_files_created": false,
+  "gt_data_used": false,
+  "historical_cache_used": false,
+  "model_forward_executed": false,
+  "normalization": {
+    "formula": "(source_vertex - merged_upper_lower_surface_area_centroid) / 40.0",
+    "center": [
+      -0.9359576121403641,
+      29.513620472768093,
+      0.5265130647159325
+    ],
+    "scale": 40.0,
+    "matrix": [
+      [
+        0.025,
+        0.0,
+        0.0,
+        0.023398940303509103
+      ],
+      [
+        0.0,
+        0.025,
+        0.0,
+        -0.7378405118192023
+      ],
+      [
+        0.0,
+        0.0,
+        0.025,
+        -0.013162826617898313
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "inverse_matrix": [
+      [
+        40.0,
+        0.0,
+        0.0,
+        -0.9359576121403641
+      ],
+      [
+        0.0,
+        40.0,
+        0.0,
+        29.513620472768093
+      ],
+      [
+        0.0,
+        0.0,
+        40.0,
+        0.5265130647159325
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "includes_gingiva_in_global_center": true,
+    "gingiva_excluded_from_network_input": true,
+    "extra_rotation_applied": false,
+    "coordinate_frame_checks": {
+      "upper": {
+        "source_to_tgnet_model": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            -1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "max_coordinate_error": 5.000018177270249e-10
+      },
+      "lower": {
+        "source_to_tgnet_model": [
+          [
+            -1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            -1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "max_coordinate_error": 5.000018177270249e-10
+      }
+    }
+  },
+  "manifold": "not run: every component watertight and winding-consistent",
+  "raw_prediction_policy": "preserved bytes; only independent reviewed candidates choose slots"
+}

@@ -81,16 +81,24 @@ class DentalDataset(data.Dataset):
     def __init__(self, config):
         super().__init__()
         self.feats = ['area', 'face_angles', 'curvs', 'normal']
+        self.before_only = bool(getattr(config, 'before_only', False))
         self.dataroot = config.dataroot
-        self.paramroot = config.paramroot
+        self.paramroot = None if self.before_only else config.paramroot
         self.before_path = config.before_path
-        self.after_path = config.after_path
+        self.after_path = None if self.before_only else config.after_path
         self.npoint = config.npoint
         with open(config.file) as f:
             self.indexes = [int(i.strip()) for i in f.readlines()]
         self.train = config.train
+        if self.before_only:
+            if self.train:
+                raise ValueError('before_only is for input reading/prediction, not supervised training')
+            if getattr(config, 'after_path', None) is not None or getattr(config, 'paramroot', None) is not None:
+                raise ValueError('before_only must not receive after_path or paramroot')
     
     def __getitem__(self, idx):
+        if self.before_only:
+            return self._getitem_before_only(idx)
         point_num = self.npoint
         feats = np.zeros((32,10,256,64))
         center = np.zeros((32,256,64,3))
@@ -131,6 +139,45 @@ class DentalDataset(data.Dataset):
         rot6d = matrix_to_rotation_6d(torch.from_numpy(matrix).float())
         gt_params = torch.cat([torch.from_numpy(after_centroid),rot6d],dim=-1)
         return   index,feats,center,cordinates,faces,Fs,before_points,after_points,centroid,after_centroid,gt_params,masks
+
+    def _getitem_before_only(self, idx):
+        """Keep official before tensor shapes, with no after/GT files or targets.
+
+        Paired training/evaluation still uses the unchanged tuple above.
+        This opt-in mode returns a dict for a dedicated input reader/predictor.
+        """
+        sample = dict(
+            index=self.indexes[idx],
+            feats=np.zeros((32,10,256,64)),
+            center=np.zeros((32,256,64,3)),
+            cordinates=np.zeros((32,256,64,9)),
+            faces=np.zeros((32,256,64,3)),
+            Fs=np.zeros(32),
+            before_points=np.zeros((32,self.npoint,3)),
+            centroid=np.zeros((32,3)),
+            masks=np.zeros(32,dtype=np.int32),
+        )
+        index = sample['index']
+        for slot in range(32):
+            obj = Path(self.dataroot) / f'{index}_{slot}.obj'
+            ply = Path(self.before_path) / f'{index}_{slot}.ply'
+            if not obj.exists() and not ply.exists():
+                continue
+            if not obj.is_file() or not ply.is_file():
+                raise FileNotFoundError(f'Incomplete before-only slot {slot}: {obj}, {ply}')
+            mesh = trimesh.load_mesh(obj,process=False)
+            points = read_pointcloud(str(ply))
+            if points.shape != (self.npoint+1,3) or not np.isfinite(points).all():
+                raise ValueError(f'{ply}: expected {self.npoint} finite points + one centroid')
+            if not np.isfinite(mesh.vertices).all() or len(mesh.faces) != 16384:
+                raise ValueError(f'{obj}: expected finite vertices and 16384 ordered MAPS faces')
+            sample['before_points'][slot] = points[:self.npoint]
+            sample['centroid'][slot] = points[self.npoint]
+            values = load_mesh_shape(mesh,request=self.feats)
+            for key,value in zip(['feats','center','cordinates','faces','Fs'],values):
+                sample[key][slot] = value
+            sample['masks'][slot] = 1
+        return sample
 
 
     def __len__(self):

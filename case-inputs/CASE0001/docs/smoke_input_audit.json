@@ -1,0 +1,220 @@
+{
+  "existing_windows_cuda_smoke_user_reported": "SMOKE_OK, 100 DDIM steps, random weights; not rerun",
+  "windows_files_directly_accessible": false,
+  "reference": "existing cloud copy of the same official compatibility code and case_0 layout",
+  "examined_code": [
+    "tests/test_windows_smoke_compat.py",
+    "datasets/DentalDataset.py",
+    "utils/smoke.py",
+    "config/TADPM.yaml",
+    "data_preprocess/get_mesh.py",
+    "data_preprocess/get_pointcloud.py",
+    "data_preprocess/simplify.py",
+    "data_preprocess/datagen_maps.py",
+    "data_preprocess/register.py"
+  ],
+  "test_windows_smoke_compat_role": "rotation6d, native import isolation, random-context DDIM mathematical equivalence; not a case converter; not run in this task",
+  "original_config": {
+    "total_bs": 24,
+    "test_train": true,
+    "paths": "* placeholders",
+    "npoint": 512
+  },
+  "smoke_effective_config": {
+    "bs": 1,
+    "train": false,
+    "npoint": 512,
+    "config_source": "utils.smoke.configure_smoke_dataset",
+    "integer_id": 0
+  },
+  "historical_case_files": {
+    "index": "case_0/case_ids.txt",
+    "mesh": "case_0/remesh_before/0_<slot>.obj",
+    "before": "case_0/pcd_before512/0_<slot>.ply",
+    "after": "case_0/pcd_after512_PLACEHOLDER/0_<slot>.ply",
+    "params": "case_0/param_PLACEHOLDER/0.npy"
+  },
+  "historical_geometry_origin": "original_coordinates/initial_upper.obj and component_0..component_13.stl; normalized with upper-only surface centroid /40",
+  "historical_ground_truth_available": false,
+  "current_case_reads_historical_files": false,
+  "current_case": {
+    "name": "CASE0001",
+    "dataset_id": 1,
+    "before_only": true,
+    "teeth_upper": 13,
+    "teeth_lower": 14,
+    "geometry_source": "CASE0001 TGNet source-coordinates original pre-treatment meshes",
+    "all_27_teeth_preprocessed_fresh": true,
+    "after_used": false,
+    "gt_used": false,
+    "old_mask_used": false,
+    "network_forward": false,
+    "normalization": "merged upper/lower source surface centroid /40"
+  },
+  "fields": {
+    "index": {
+      "sample_shape": [],
+      "batch_shape": [
+        1
+      ],
+      "source": "case_ids.txt integer"
+    },
+    "feats": {
+      "sample_shape": [
+        32,
+        10,
+        256,
+        64
+      ],
+      "batch_shape": [
+        1,
+        32,
+        10,
+        256,
+        64
+      ],
+      "source": "remesh_before OBJ; official area1 + sorted face_angles3 + sorted curvs3 + normal3"
+    },
+    "center": {
+      "sample_shape": [
+        32,
+        256,
+        64,
+        3
+      ],
+      "batch_shape": [
+        1,
+        32,
+        256,
+        64,
+        3
+      ],
+      "source": "remesh face three-vertex mean, official patch ordering"
+    },
+    "cordinates": {
+      "sample_shape": [
+        32,
+        256,
+        64,
+        9
+      ],
+      "batch_shape": [
+        1,
+        32,
+        256,
+        64,
+        9
+      ],
+      "source": "remesh face vertex coordinates, original spelling"
+    },
+    "faces": {
+      "sample_shape": [
+        32,
+        256,
+        64,
+        3
+      ],
+      "batch_shape": [
+        1,
+        32,
+        256,
+        64,
+        3
+      ],
+      "source": "ordered face vertex indices"
+    },
+    "Fs": {
+      "sample_shape": [
+        32
+      ],
+      "batch_shape": [
+        1,
+        32
+      ],
+      "source": "number of remesh faces"
+    },
+    "before_points": {
+      "sample_shape": [
+        32,
+        512,
+        3
+      ],
+      "batch_shape": [
+        1,
+        32,
+        512,
+        3
+      ],
+      "source": "before PLY first512 rows"
+    },
+    "centroid": {
+      "sample_shape": [
+        32,
+        3
+      ],
+      "batch_shape": [
+        1,
+        32,
+        3
+      ],
+      "source": "before PLY last (513th) row, surface-area centroid"
+    },
+    "masks": {
+      "sample_shape": [
+        32
+      ],
+      "batch_shape": [
+        1,
+        32
+      ],
+      "source": "paired: OBJ+before+after exists; before_only: OBJ+before exists"
+    },
+    "after_points": {
+      "sample_shape": [
+        32,
+        512,
+        3
+      ],
+      "batch_shape": [
+        1,
+        32,
+        512,
+        3
+      ],
+      "source": "historical placeholder before copy; NOT present in current case",
+      "omitted_from_before_only": true
+    },
+    "after_centroid": {
+      "sample_shape": [
+        32,
+        3
+      ],
+      "batch_shape": [
+        1,
+        32,
+        3
+      ],
+      "source": "historical placeholder before centroid; NOT present in current case",
+      "omitted_from_before_only": true
+    },
+    "gt_params": {
+      "sample_shape": [
+        32,
+        9
+      ],
+      "batch_shape": [
+        1,
+        32,
+        9
+      ],
+      "source": "paired after_centroid3 + first two rows of param rotation6d; legacy identity file only smoke",
+      "omitted_from_before_only": true
+    }
+  },
+  "preprocess": {
+    "points": "official vertex FPS512; append area-weighted surface centroid",
+    "mesh": "QEM256 + official MAPS depth3; 16384 ordered faces;256 patches x64 faces",
+    "coords": "no per-tooth recenter or extra rotation; preserve source upper/lower pose",
+    "manifold": "skipped only because real source components are watertight and winding-consistent"
+  }
+}

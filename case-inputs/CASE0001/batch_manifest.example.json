@@ -1,0 +1,14 @@
+[
+  {
+    "source": "CASE0001",
+    "reviewed_csv": "CASE0001/reviewed_component_fdi.csv",
+    "case_name": "CASE0001",
+    "dataset_id": 1
+  },
+  {
+    "source": "CASE0002",
+    "reviewed_csv": "CASE0002/reviewed_component_fdi.csv",
+    "case_name": "CASE0002",
+    "dataset_id": 2
+  }
+]
