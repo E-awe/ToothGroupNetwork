@@ -1,0 +1,897 @@
+diff --git a/WINDOWS_SMOKE.md b/WINDOWS_SMOKE.md
+new file mode 100644
+index 0000000..7c0cd6a
+--- /dev/null
++++ b/WINDOWS_SMOKE.md
+@@ -0,0 +1,68 @@
++本分支基于官方 lcshhh/TADPM 提交 92967a68191846ab38dcdb2ae7914e19ecd0d396。
++发布仓库为已连接的 E-awe/ToothGroupNetwork，分支 tadpm-windows-smoke；此分支目录结构是官方 TADPM。
++
++目标：Windows / PyTorch 2.5.1+cu121 / RTX 4060 Laptop 上运行随机权重完整 forward。
++没有 TADPM checkpoint；输出没有临床意义，也不是治疗后真值。
++
++准备：
++- 使用本分支完整源码，或把 compat/tadpm-windows-smoke.patch 应用于上述官方提交。
++- 有本地手工修改时，先运行 git apply --check；不要强制覆盖手工文件。
++- 保留现有 torch 2.5.1+cu121。建议 Python 3.10–3.12（必须由 D:\python\python.exe 实际支持这些包）。
++- 现有 tadpm_official_upper_input.zip 直接解压到本分支根目录，使 case_0/remesh_before 等目录存在。不重新生成病例。
++- 不安装官方 requirements.txt 的冲突重复项，不编译 pointops 或 chamfer。
++
++缺少依赖时，在 PowerShell 安装：
++```powershell
++& "D:\python\python.exe" -m pip install "torchvision==0.20.1" --index-url https://download.pytorch.org/whl/cu121
++& "D:\python\python.exe" -m pip install -r requirements-windows-smoke.txt
++```
++torchvision 应与 torch 同为 cu121 构建。PyTorch3D、chamfer、xformers、comet_ml、wandb 不属于此 test 路径的必需依赖。
++
++在 TADPM 根目录执行唯一 smoke inference 命令：
++```powershell
++& "D:\python\python.exe" main.py --config config/TADPM.yaml --save_root ./smoke_runs --exp_name case0_smoke --test --num_workers 0
++```
++默认设备为 CUDA，默认输入为 ./case_0。输入在其他目录时添加 --case_root "D:\完整路径\case_0"。
++无 --ckpts 自动进入 smoke，test Dataset 的 train=False、batch=1，不做随机数据增强或 drop_last。
++模型结构、dim=768、depth=12、condition 构造、U-ViT、100步DDIM/eta=1全部保持官方逻辑。
++模型不会利用 mask 跳过缺牙槽位；32槽位完整 forward，mask 随输出保存。
++
++成功标志：
++```text
++SMOKE_OK: DentalDataset -> TADPM -> Diffusion/UViT -> DDIM (100 steps)
++```
++输出：smoke_runs/test_case0_smoke/smoke_report.json 和 smoke_batch_000.pt。
++pt 中 outputs 为 (1,32,9)，前三维为模型输出的归一化中心，后六维为行约定的 rotation6d；masks 为 (1,32)。
++输出全部32个槽位，缺牙/下颌槽位由 masks 判断有效性。这不是 FDI segmentation JSON。
++after PLY 与旋转参数是现有输入包的加载占位，smoke 不计算 ADD、不报告治疗效果。
++有 --ckpts 时仍使用原 builder.load_model_from_ckpt 的 strict=True 加载与原测试指标路径；正式训练路径保留。
++正式 checkpoint 推理请配置真实数据路径；smoke 的 case_0 自动路径覆盖仅在无 checkpoint 时生效。
++
++兼容修改：
++- utils/__init__.py：明确本地包，解决 site-packages/utils 冲突。
++- utils/rotation6d.py：与 PyTorch3D 同约定的首两行展开及 Gram-Schmidt，保留 batch/dtype/device/autograd。
++- datasets/DentalDataset.py、runners/test_tadpm.py、runners/train_tadpm.py：替换 rotation6d import。
++- 三个 runner（含 pretrain）：移除没有调用过的 pytorch3d.loss.chamfer_distance import。
++- test/train runner：移除未使用的 torchvision.transforms import；timm 仍需要匹配的 torchvision。
++- models/MeshMAE.py：捕获 Chamfer ImportError/OSError；仅实例化 Mesh_mae 才报错，Mesh_encoder 保持可用。
++- models/MeshMAE.py：encoder 零填充跟随输入设备，参数和特征构造不变。
++- models/diffusion.py：设备转移跟随输入；schedule 注册为 persistent=False buffers，不增加 checkpoint keys。DDIM公式不变。
++- main.py：增加可选 --case_root 和 --device，明确导入 Path；默认仍 CUDA。
++- utils/config.py：用 shutil.copy2 替代 Windows 不可用的 shell cp。
++- config/TADPM.yaml：对原来的 * 占位路径加引号，让 YAML 能解析；正式训练参数不变。
++- utils/smoke.py：现有病例路径解析、32槽位输出/有限值检查及 forward 调用次数报告。
++- requirements-windows-smoke.txt、tests/test_windows_smoke_compat.py：明确依赖和可执行回归检查。
++
++云端已实际验证（见 compat/validation）：
++- Linux，Python3.12.14，torch2.5.1+cpu；没有执行 Windows/CUDA 推理。
++- 静态编译、原生 main/train/test/pretrain imports（主动禁止 PyTorch3D/chamfer/xformers）通过。
++- 4项 unittest：旋转行约定/批量/精度、梯度、无扩展导入及 Mesh_mae 明确报错、官方100步DDIM一致性与state_dict keys。
++- 现有13牙病例经原生 DentalDataset/DataLoader、完整TADPM网络和100步DDIM，outputs=(1,32,9)，全有限。
++- 参考DDIM测试只在参考代码中将CUDA设备转移到CPU，没有替换U-ViT、condition或DDIM数学公式。
++- 没有真实训练 checkpoint，因此没有验证真实 checkpoint 预测质量或 Windows GPU 执行。
++
++复核测试命令（可选）：
++```text
++python -m unittest discover -s tests -p test_windows_smoke_compat.py -v
++```
++DDIM参考测试需要 Git 历史中的官方基线提交，因此完整Git克隆才能运行这一项。
+diff --git a/compat/validation/compat-tests.log b/compat/validation/compat-tests.log
+new file mode 100644
+index 0000000..41a14c7
+--- /dev/null
++++ b/compat/validation/compat-tests.log
+@@ -0,0 +1,24 @@
++test_ddim_matches_official_reference_and_state_keys (test_windows_smoke_compat.DiffusionTests.test_ddim_matches_official_reference_and_state_keys) ... /workspace/toothgroup-environment/venv/lib/python3.12/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
++  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
++/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/open3d/__init__.py:80: ImportWarning: Open3D was built with CUDA support, but no suitable CUDA devices found. If your system has CUDA devices, check your CUDA drivers and runtime.
++  warnings.warn(
++/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_fontconfig_pattern.py:64: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
++  prop = Group((name + Suppress("=") + comma_separated(value)) | oneOf(_CONSTANTS))
++/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_fontconfig_pattern.py:85: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
++  parse = parser.parseString(pattern)
++/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_fontconfig_pattern.py:89: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
++  parser.resetCache()
++/workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
++  ParserElement.enablePackrat()
++In /workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/mpl-data/stylelib/classic.mplstyle: 'parseString' deprecated - use 'parse_string'
++In /workspace/toothgroup-environment/venv/lib/python3.12/site-packages/matplotlib/mpl-data/stylelib/classic.mplstyle: 'resetCache' deprecated - use 'reset_cache'
++ok
++test_autograd (test_windows_smoke_compat.RotationTests.test_autograd) ... ok
++test_rows_batch_dtype_and_roundtrip (test_windows_smoke_compat.RotationTests.test_rows_batch_dtype_and_roundtrip) ... ok
++test_main_without_pytorch3d_or_chamfer (test_windows_smoke_compat.StartupTests.test_main_without_pytorch3d_or_chamfer) ... ok
++
++----------------------------------------------------------------------
++Ran 4 tests in 20.763s
++
++OK
++xformers disabled
+diff --git a/compat/validation/smoke_batch_000.pt b/compat/validation/smoke_batch_000.pt
+new file mode 100644
+index 0000000000000000000000000000000000000000..49e9151fc247f115432023b8b7e0c48342de6250
+GIT binary patch
+literal 2888
+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
+Yv8*q-Q~#OAi4xPv<s90JSwFS*dk>SYBme*a
+
+literal 0
+HcmV?d00001
+
+diff --git a/compat/validation/smoke_report.json b/compat/validation/smoke_report.json
+new file mode 100644
+index 0000000..7d17a83
+--- /dev/null
++++ b/compat/validation/smoke_report.json
+@@ -0,0 +1,74 @@
++{
++  "status": "SMOKE_OK",
++  "checkpoint": null,
++  "encoder_checkpoint": null,
++  "random_weights": true,
++  "clinical_prediction": false,
++  "after_placeholder_is_not_ground_truth": true,
++  "add_metric_computed": false,
++  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
++  "python": "3.12.14",
++  "torch": "2.5.1+cpu",
++  "torch_cuda_build": null,
++  "device": "cpu",
++  "gpu": null,
++  "seed": 42,
++  "ddim_sampling_timesteps": 100,
++  "forward_calls": {
++    "Mesh_encoder": 32,
++    "Diffusion": 1,
++    "UViT": 100
++  },
++  "batches": [
++    {
++      "case_ids": [
++        0
++      ],
++      "file": "smoke_batch_000.pt",
++      "shape": [
++        1,
++        32,
++        9
++      ],
++      "all_finite": true,
++      "masks": [
++        [
++          0,
++          1,
++          1,
++          0,
++          1,
++          1,
++          1,
++          1,
++          1,
++          1,
++          1,
++          1,
++          1,
++          1,
++          1,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0,
++          0
++        ]
++      ],
++      "output_min": -1.4676299095153809,
++      "output_max": 1.9640066623687744
++    }
++  ]
++}
+diff --git a/compat/validation/validation_summary.json b/compat/validation/validation_summary.json
+new file mode 100644
+index 0000000..8ef4d5d
+--- /dev/null
++++ b/compat/validation/validation_summary.json
+@@ -0,0 +1,11 @@
++{
++  "official_base_commit": "92967a68191846ab38dcdb2ae7914e19ecd0d396",
++  "unit_tests_passed": 4,
++  "native_imports_passed": true,
++  "full_real_case_cpu_forward_passed": true,
++  "ddim_steps": 100,
++  "windows_cuda_test_executed": false,
++  "checkpoint_tested": null,
++  "existing_input_zip_sha256": "9d53de0eea7d43c5c755d5c9c8ddf9f56664df45edac6792eca472d73f7f41b4",
++  "input_data_regenerated": false
++}
+diff --git a/config/TADPM.yaml b/config/TADPM.yaml
+index b81a798..52b7624 100644
+--- a/config/TADPM.yaml
++++ b/config/TADPM.yaml
+@@ -5,30 +5,30 @@ scheduler: { type: CosLR, kwargs: { epochs: 500, initial_epochs: 10 } }
+ dataset : {
+   train : { NAME: DentalDataset,
+             train: True,
+-            dataroot: */remesh_before,  
+-            paramroot: */param,
+-            before_path: */pcd_before512,
+-            after_path: */pcd_after512,
++            dataroot: '*/remesh_before',
++            paramroot: '*/param',
++            before_path: '*/pcd_before512',
++            after_path: '*/pcd_after512',
+             npoint: 512,
+-            file: *,
++            file: '*',
+             },
+   val : { NAME: DentalDataset,
+             train: True,
+-            dataroot: */remesh_before,  
+-            paramroot: */param,
+-            before_path: */pcd_before512,
+-            after_path: */pcd_after512,
++            dataroot: '*/remesh_before',
++            paramroot: '*/param',
++            before_path: '*/pcd_before512',
++            after_path: '*/pcd_after512',
+             npoint: 512,
+-            file: *,
++            file: '*',
+             },
+   test : { NAME: DentalDataset,
+             train: True,
+-            dataroot: */remesh_before,  
+-            paramroot: */param,
+-            before_path: */pcd_before512,
+-            after_path: */pcd_after512,
++            dataroot: '*/remesh_before',
++            paramroot: '*/param',
++            before_path: '*/pcd_before512',
++            after_path: '*/pcd_after512',
+             npoint: 512,
+-            file: *,
++            file: '*',
+             }}
+ 
+ model:
+diff --git a/datasets/DentalDataset.py b/datasets/DentalDataset.py
+index 7f388bc..00d9d3a 100644
+--- a/datasets/DentalDataset.py
++++ b/datasets/DentalDataset.py
+@@ -12,7 +12,7 @@ from utils.builder import DATASETS
+ import copy
+ import open3d as o3d
+ from utils.pointcloud import read_pointcloud
+-from pytorch3d.transforms import matrix_to_rotation_6d
++from utils.rotation6d import matrix_to_rotation_6d
+ 
+ def  randomize_mesh_orientation(mesh: trimesh.Trimesh):
+     mesh1 = copy.deepcopy(mesh)
+@@ -134,4 +134,4 @@ class DentalDataset(data.Dataset):
+ 
+ 
+     def __len__(self):
+-        return len(self.indexes)
+\ No newline at end of file
++        return len(self.indexes)
+diff --git a/main.py b/main.py
+index ca926bc..0c793ea 100644
+--- a/main.py
++++ b/main.py
+@@ -5,6 +5,7 @@ from loguru import logger
+ import argparse
+ import time
+ import os
++from pathlib import Path
+ import torch
+ from tensorboardX import SummaryWriter
+ from datasets import *
+@@ -29,6 +30,10 @@ def get_args():
+     parser.add_argument('--exp_name', type = str, required=True)
+     parser.add_argument('--ckpts', type = str, default='')
+     parser.add_argument('--encoder_ckpts', type = str, default='')
++    parser.add_argument('--case_root', type=str, default=None,
++                        help='Existing case_0 directory for checkpoint-free smoke test (default: ./case_0)')
++    parser.add_argument('--device', choices=['cuda', 'cpu'], default='cuda',
++                        help='Test device; CPU is for compatibility checks only')
+     parser.add_argument('--resume', action='store_true')
+     parser.add_argument('--val_freq', type = int, default=1, help = 'test freq')
+     parser.add_argument(
+diff --git a/models/MeshMAE.py b/models/MeshMAE.py
+index 27b6898..fca1284 100644
+--- a/models/MeshMAE.py
++++ b/models/MeshMAE.py
+@@ -4,7 +4,11 @@ import torch.nn.functional as F
+ from einops import repeat
+ from einops import rearrange, repeat
+ from einops.layers.torch import Rearrange
+-from chamfer_dist import ChamferDistanceL1
++try:
++    from chamfer_dist import ChamferDistanceL1
++except (ImportError, OSError) as error:
++    ChamferDistanceL1 = None
++    _CHAMFER_IMPORT_ERROR = error
+ import copy
+ import numpy as np
+ import math
+@@ -20,6 +24,12 @@ class Mesh_mae(nn.Module):
+                  decoder_num_heads=16, decoder_depth=6, decoder_embed_dim=512,
+                  patch_size=64, norm_layer=nn.LayerNorm, weight=0.5):
+         super(Mesh_mae, self).__init__()
++        if ChamferDistanceL1 is None:
++            raise RuntimeError(
++                'Mesh_mae pretraining requires the compiled chamfer extension. '
++                'Install/build chamfer_dist for pretraining. Mesh_encoder and '
++                'TADPM inference do not require this extension.'
++            ) from _CHAMFER_IMPORT_ERROR
+         patch_dim = channels
+         self.num_patches = 256
+         self.weight = weight
+@@ -253,7 +263,7 @@ class Mesh_encoder(nn.Module):
+             tokens = blk(tokens)
+ 
+         x = self.norm(tokens)
+-        zero_tokens = torch.zeros((batch, 256 - num_patches, self.dim), dtype=torch.float32).cuda()
++        zero_tokens = torch.zeros((batch, 256 - num_patches, self.dim), dtype=torch.float32, device=x.device)
+         tokens = torch.cat((x, zero_tokens), dim=1)
+         tokens = self.max_pooling2(tokens).squeeze(1)
+-        return tokens
+\ No newline at end of file
++        return tokens
+diff --git a/models/diffusion.py b/models/diffusion.py
+index 4c968fc..8192b0a 100644
+--- a/models/diffusion.py
++++ b/models/diffusion.py
+@@ -25,7 +25,7 @@ def cosine_beta_schedule(timesteps, s=0.008):
+     alphas_cumprod = torch.cos(((x / timesteps) + s) / (1 + s) * math.pi * 0.5) ** 2
+     alphas_cumprod = alphas_cumprod / alphas_cumprod[0]
+     betas = 1 - (alphas_cumprod[1:] / alphas_cumprod[:-1])
+-    return torch.clip(betas, 0, 0.999).to('cuda')
++    return torch.clip(betas, 0, 0.999)
+ 
+ def extract(a, t, x_shape):
+     """extract the appropriate  t  index for a batch of indices"""
+@@ -44,14 +44,15 @@ class diffusion(nn.Module):
+         self.in_features = in_features
+         self.timesteps = timesteps
+         self.sampling_timesteps = sampling_timesteps
+-        self.betas = cosine_beta_schedule(self.timesteps).cuda()
+-        self.alphas = 1. - self.betas
+-        self.alphas_cumprod = torch.cumprod(self.alphas, dim=0)
++        # Non-persistent buffers follow model.to(device) without adding checkpoint keys.
++        self.register_buffer('betas', cosine_beta_schedule(self.timesteps), persistent=False)
++        self.register_buffer('alphas', 1. - self.betas, persistent=False)
++        self.register_buffer('alphas_cumprod', torch.cumprod(self.alphas, dim=0), persistent=False)
+         self.model = UViT()
+         self.eta = eta
+-        self.sqrt_alphas_cumprod =  torch.sqrt(self.alphas_cumprod)
+-        self.sqrt_one_minus_alphas_cumprod = torch.sqrt(1-self.alphas_cumprod)
+-        self.sqrt_recip_alphas_cumprod = torch.sqrt(1. / self.alphas_cumprod)
++        self.register_buffer('sqrt_alphas_cumprod', torch.sqrt(self.alphas_cumprod), persistent=False)
++        self.register_buffer('sqrt_one_minus_alphas_cumprod', torch.sqrt(1-self.alphas_cumprod), persistent=False)
++        self.register_buffer('sqrt_recip_alphas_cumprod', torch.sqrt(1. / self.alphas_cumprod), persistent=False)
+         assert self.sampling_timesteps <= self.timesteps
+     
+     def set_device(self,device):
+@@ -60,7 +61,7 @@ class diffusion(nn.Module):
+     # forward diffusion
+     def q_sample(self, x_start, t, noise=None):
+         if noise is None:
+-            noise = torch.randn_like(x_start).to(torch.float32).cuda()
++            noise = torch.randn_like(x_start).to(torch.float32)
+         sqrt_alphas_cumprod_t = extract(self.sqrt_alphas_cumprod.to(t.device), t, x_start.shape)
+         sqrt_one_minus_alphas_cumprod_t = extract(self.sqrt_one_minus_alphas_cumprod.to(t.device), t, x_start.shape)
+         return sqrt_alphas_cumprod_t * x_start + sqrt_one_minus_alphas_cumprod_t * noise
+@@ -80,14 +81,14 @@ class diffusion(nn.Module):
+                    )
+ 
+         # x = torch.randn(shape)
+-        x = torch.randn(shape).cuda()
++        x = torch.randn(shape).to(features.device)
+         seq_next = [-1] + list(seq[:-1])
+         x0_preds = []
+         xs = [x]
+ 
+         for i, j in zip(reversed(seq), reversed(seq_next)):
+-            t = (torch.ones(batch) * i).cuda()
+-            next_t = (torch.ones(batch) * j).cuda()
++            t = (torch.ones(batch) * i).to(features.device)
++            next_t = (torch.ones(batch) * j).to(features.device)
+             at = compute_alpha(self.betas.to(t.device), t.long())
+             at_next = compute_alpha(self.betas.to(t.device), next_t.long())
+             xt = xs[-1].to(torch.float32)
+@@ -113,10 +114,10 @@ class diffusion(nn.Module):
+         else:
+             bs = batched_inputs.shape[0]
+             t = [torch.randint(0, 1000 , (1,)).long() for _ in range(bs)]
+-            t = torch.stack(t).squeeze(-1).cuda()
++            t = torch.stack(t).squeeze(-1).to(features.device)
+             batched_inputs = batched_inputs     # [bs,32,6]
+-            noise = torch.randn_like(batched_inputs).cuda()
++            noise = torch.randn_like(batched_inputs)
+             x_t = self.q_sample(batched_inputs,t,noise)
+             x_t = x_t.to(torch.float32)
+             predicted= self.model(x_t,t,features)
+-            return predicted
+\ No newline at end of file
++            return predicted
+diff --git a/requirements-windows-smoke.txt b/requirements-windows-smoke.txt
+new file mode 100644
+index 0000000..5c68a8d
+--- /dev/null
++++ b/requirements-windows-smoke.txt
+@@ -0,0 +1,13 @@
++# Existing torch 2.5.1+cu121 is retained. Install matching torchvision separately
++# from https://download.pytorch.org/whl/cu121 (see WINDOWS_SMOKE.md).
++numpy==1.26.4
++scipy==1.14.1
++trimesh==4.6.10
++open3d==0.19.0
++PyYAML==6.0.2
++easydict==1.13
++einops==0.8.1
++timm==1.0.16
++loguru==0.7.2
++tensorboardX==2.6.4
++matplotlib==3.10.3
+diff --git a/runners/pretrain.py b/runners/pretrain.py
+index 15a3ed8..1db18a3 100644
+--- a/runners/pretrain.py
++++ b/runners/pretrain.py
+@@ -5,7 +5,6 @@ from utils import misc, dist_utils
+ import time
+ from utils.logger import *
+ from utils.AverageMeter import AverageMeter
+-from pytorch3d.loss import chamfer_distance
+ from models.MeshMAE import Mesh_mae
+ 
+ import numpy as np
+@@ -135,4 +134,4 @@ def validate(base_model, test_dataloader, epoch, val_writer, args, config, logge
+ 
+ 
+     # Add testing results to TensorBoard
+-    return losses.avg()[0]
+\ No newline at end of file
++    return losses.avg()[0]
+diff --git a/runners/test_tadpm.py b/runners/test_tadpm.py
+index 006f921..3961537 100644
+--- a/runners/test_tadpm.py
++++ b/runners/test_tadpm.py
+@@ -5,14 +5,13 @@ from utils import misc, dist_utils
+ import time
+ from utils.logger import *
+ from utils.AverageMeter import AverageMeter
+-from pytorch3d.loss import chamfer_distance
+ from utils.pointcloud import write_pointcloud
+ import numpy as np
+ from einops import rearrange
+-from torchvision import transforms
+-from pytorch3d.transforms import rotation_6d_to_matrix
++from utils.rotation6d import rotation_6d_to_matrix
+ import os
+ import trimesh
++from utils.smoke import configure_smoke_dataset, SmokeRecorder
+ 
+ def transform_mesh(index, outputs):
+     """
+@@ -38,6 +37,13 @@ def transform_mesh(index, outputs):
+ 
+ 
+ def test_tadpm(args, config, logger):
++    smoke = not args.ckpts
++    if smoke:
++        configure_smoke_dataset(args, config)
++        logger.warning('No TADPM checkpoint: random-weight forward smoke test; no clinical prediction or ADD evaluation.')
++    device = torch.device(getattr(args, 'device', 'cuda'))
++    if device.type == 'cuda' and not torch.cuda.is_available():
++        raise RuntimeError('CUDA is unavailable in this interpreter. Use your CUDA-enabled Python; --device cpu is only for CPU compatibility checks.')
+     # build dataset
+     config.model.args = args
+     (_, test_dataloader)= builder.dataset_builder(args, config.dataset.test)
+@@ -47,29 +53,37 @@ def test_tadpm(args, config, logger):
+ 
+     # resume ckpts
+     # base_model.load_model_from_ckpt(args.ckpts)
+-    builder.load_model_from_ckpt(base_model,args.ckpts)
++    if args.ckpts:
++        builder.load_model_from_ckpt(base_model,args.ckpts)
+  
+     logger.info('Using Data parallel ...' , logger = logger)
+-    device = torch.device('cuda') 
+-    base_model = nn.DataParallel(base_model).cuda()
++    base_model = base_model.to(device)
++    recorder = SmokeRecorder(base_model, args) if smoke else None
++    if device.type == 'cuda':
++        base_model = nn.DataParallel(base_model)
+     # optimizer & scheduler
+     logger.info(f"[TEST] Start test")
+     base_model.eval()  # set model to eval mode
+     losses = AverageMeter(['loss'])
+     with torch.no_grad():
+         for idx, (index,feats,center,cordinates,faces,Fs,before_points,after_points,centroid,after_centroid,gt_params,masks) in enumerate(test_dataloader):
+-            faces = faces.to(torch.float32).cuda()
+-            feats = feats.to(torch.float32).cuda()
+-            center = center.to(torch.float32).cuda()
+-            gt_params = gt_params.to(torch.float32).cuda()
+-            Fs = Fs.cuda()
+-            cordinates = cordinates.cuda()
+-            centroid = centroid.to(torch.float32).cuda()
+-            after_centroid = after_centroid.to(torch.float32).cuda()
+-            before_points = before_points.to(torch.float32).cuda()
+-            after_points = after_points.to(torch.float32).cuda()
+-            masks = masks.cuda()
+-            outputs = base_model(faces, feats, center, Fs, cordinates, centroid, before_points, gt_params).to(torch.float32).cuda()
++            faces = faces.to(device=device, dtype=torch.float32)
++            feats = feats.to(device=device, dtype=torch.float32)
++            center = center.to(device=device, dtype=torch.float32)
++            gt_params = gt_params.to(device=device, dtype=torch.float32)
++            Fs = Fs.to(device)
++            cordinates = cordinates.to(device)
++            centroid = centroid.to(device=device, dtype=torch.float32)
++            after_centroid = after_centroid.to(device=device, dtype=torch.float32)
++            before_points = before_points.to(device=device, dtype=torch.float32)
++            after_points = after_points.to(device=device, dtype=torch.float32)
++            masks = masks.to(device)
++            if smoke and not masks.any():
++                raise RuntimeError('No valid teeth loaded. Check case_0 OBJ/before/after paths.')
++            outputs = base_model(faces, feats, center, Fs, cordinates, centroid, before_points, gt_params).to(torch.float32)
++            if smoke:
++                recorder.save(index, masks, outputs)
++                continue
+ 
+             predicted_centroid = outputs[:,:,:3]
+             rot6d = rearrange(outputs[:,:,3:],'b n c -> (b n) c')
+@@ -82,5 +96,8 @@ def test_tadpm(args, config, logger):
+             loss = criterion(predicted_points,after_points).sum(dim=-1).sqrt()
+             loss = 40*(loss * masks.flatten().unsqueeze(1)).mean()
+             losses.update([loss.item()])
+-    print(f"Calculated ADD metric is: {losses.avg()[0]:.4f}")
+-            
+\ No newline at end of file
++    if smoke:
++        recorder.finish()
++    else:
++        print(f"Calculated ADD metric is: {losses.avg()[0]:.4f}")
++
+diff --git a/runners/train_tadpm.py b/runners/train_tadpm.py
+index d8b080c..c3bd0ee 100644
+--- a/runners/train_tadpm.py
++++ b/runners/train_tadpm.py
+@@ -5,13 +5,11 @@ from utils import misc, dist_utils
+ import time
+ from utils.logger import *
+ from utils.AverageMeter import AverageMeter
+-from pytorch3d.loss import chamfer_distance
+ from einops import rearrange
+ from torch import autograd
+ 
+ import numpy as np
+-from torchvision import transforms
+-from pytorch3d.transforms import rotation_6d_to_matrix
++from utils.rotation6d import rotation_6d_to_matrix
+ 
+ def robust_compute_rotation_matrix_from_ortho6d(poses):
+     """
+@@ -207,4 +205,4 @@ def validate(base_model, test_dataloader, epoch, val_writer, args, config, logge
+         logger.info('[Validation] EPOCH: %d  Loss = %s' % (epoch,['%.4f' % l for l in losses.avg()]))
+ 
+ 
+-    return losses.avg()[0]
+\ No newline at end of file
++    return losses.avg()[0]
+diff --git a/tests/test_windows_smoke_compat.py b/tests/test_windows_smoke_compat.py
+new file mode 100644
+index 0000000..9beba4c
+--- /dev/null
++++ b/tests/test_windows_smoke_compat.py
+@@ -0,0 +1,100 @@
++"""CPU checks: import isolation, rotations, and unmodified DDIM mathematics.
++
++Run: python -m unittest discover -s tests -p test_windows_smoke_compat.py -v
++No CUDA extension is compiled or executed.
++"""
++import importlib.abc
++import subprocess
++import sys
++import types
++import unittest
++from pathlib import Path
++from unittest.mock import patch
++
++import torch
++from utils.rotation6d import matrix_to_rotation_6d, rotation_6d_to_matrix
++
++ROOT = Path(__file__).resolve().parents[1]
++BASE = '92967a68191846ab38dcdb2ae7914e19ecd0d396'
++
++
++class RotationTests(unittest.TestCase):
++    def test_rows_batch_dtype_and_roundtrip(self):
++        r = torch.tensor([[0., -1., 0.], [1., 0., 0.], [0., 0., 1.]], dtype=torch.float64)
++        d6 = matrix_to_rotation_6d(r)
++        torch.testing.assert_close(d6, torch.tensor([0., -1., 0., 1., 0., 0.], dtype=r.dtype))
++        torch.testing.assert_close(rotation_6d_to_matrix(d6), r)
++        q, _ = torch.linalg.qr(torch.randn(2, 3, 3, 3, dtype=torch.float64))
++        q[..., 2, :] *= torch.det(q)[..., None]
++        result = rotation_6d_to_matrix(matrix_to_rotation_6d(q))
++        self.assertEqual(result.shape, (2, 3, 3, 3))
++        torch.testing.assert_close(result, q)
++        torch.testing.assert_close(result @ result.transpose(-1, -2), torch.eye(3, dtype=q.dtype).expand_as(q))
++        torch.testing.assert_close(torch.det(result), torch.ones(2, 3, dtype=q.dtype))
++
++    def test_autograd(self):
++        d6 = torch.randn(2, 6, dtype=torch.float64, requires_grad=True)
++        self.assertTrue(torch.autograd.gradcheck(rotation_6d_to_matrix, (d6,)))
++        r = torch.randn(2, 3, 3, dtype=torch.float64, requires_grad=True)
++        self.assertTrue(torch.autograd.gradcheck(matrix_to_rotation_6d, (r,)))
++
++
++class StartupTests(unittest.TestCase):
++    def test_main_without_pytorch3d_or_chamfer(self):
++        code = r'''
++import importlib.abc, sys
++class NoExtensions(importlib.abc.MetaPathFinder):
++    def find_spec(self, fullname, path=None, target=None):
++        if fullname.split('.')[0] in ('pytorch3d', 'chamfer', 'xformers'):
++            raise ModuleNotFoundError('Intentionally unavailable: ' + fullname)
++sys.meta_path.insert(0, NoExtensions())
++import main
++import runners.pretrain
++from models.MeshMAE import Mesh_encoder, Mesh_mae
++from utils.config import cfg_from_yaml_file
++assert cfg_from_yaml_file('config/TADPM.yaml').model.NAME == 'TADPM'
++try:
++    Mesh_mae()
++except RuntimeError as e:
++    assert 'compiled chamfer extension' in str(e)
++else:
++    raise AssertionError('Missing chamfer must produce a clear Mesh_mae error')
++assert not any(k.startswith('pytorch3d') for k in sys.modules)
++print('Native main/train/test/pretrain imports passed without optional extensions')
++'''
++        result = subprocess.run([sys.executable, '-c', code], cwd=ROOT, text=True,
++                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
++        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
++
++
++class DiffusionTests(unittest.TestCase):
++    def test_ddim_matches_official_reference_and_state_keys(self):
++        # Only the REFERENCE redirects CUDA transfers to CPU, in this test process.
++        # The patched model executes natively on CPU; no network/condition is mocked.
++        from models.diffusion import diffusion
++        source = subprocess.check_output(
++            ['git', 'show', BASE + ':models/diffusion.py'], cwd=ROOT, text=True
++        )
++        source = source.replace(".to('cuda')", ".to('cpu')")
++        reference = types.ModuleType('official_diffusion_reference')
++        torch.set_num_threads(2)
++        with patch.object(torch.Tensor, 'cuda', lambda tensor, *a, **k: tensor):
++            exec(compile(source, 'official_diffusion_reference.py', 'exec'), reference.__dict__)
++            official = reference.diffusion(1827).eval()
++            actual = diffusion(1827).eval()
++            actual.load_state_dict(official.state_dict(), strict=True)
++            self.assertEqual(list(actual.state_dict()), list(official.state_dict()))
++            torch.testing.assert_close(actual.betas, official.betas, rtol=0, atol=0)
++            context = torch.randn(1, 32, 1827)
++            torch.manual_seed(42)
++            expected = official(None, context)
++        torch.manual_seed(42)
++        result = actual(None, context)
++        self.assertEqual(result.shape, (1, 32, 9))
++        self.assertTrue(torch.isfinite(result).all())
++        torch.testing.assert_close(result, expected, rtol=0, atol=0)
++        self.assertFalse(any(k in actual.state_dict() for k in actual._buffers))
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/utils/__init__.py b/utils/__init__.py
+new file mode 100644
+index 0000000..a62f92b
+--- /dev/null
++++ b/utils/__init__.py
+@@ -0,0 +1 @@
++"""Local TADPM utilities (takes precedence over third-party ``utils`` packages)."""
+diff --git a/utils/config.py b/utils/config.py
+index 4f898e4..6f5ae08 100644
+--- a/utils/config.py
++++ b/utils/config.py
+@@ -1,6 +1,7 @@
+ import yaml
+ from easydict import EasyDict
+ import os
++import shutil
+ from .logger import print_log
+ 
+ def log_args_to_file(args, logger, file_name):
+@@ -61,5 +62,5 @@ def get_config(args, logger=None):
+ 
+ def save_experiment_config(args, config, logger = None):
+     config_path = os.path.join(args.experiment_path, 'config.yaml')
+-    os.system('cp %s %s' % (args.config, config_path))
+-    logger.info(f'Copy the Config file from {args.config} to {config_path}')
+\ No newline at end of file
++    shutil.copy2(args.config, config_path)
++    logger.info(f'Copy the Config file from {args.config} to {config_path}')
+diff --git a/utils/rotation6d.py b/utils/rotation6d.py
+new file mode 100644
+index 0000000..e67bf68
+--- /dev/null
++++ b/utils/rotation6d.py
+@@ -0,0 +1,26 @@
++"""PyTorch3D-compatible 6D rotations, implemented using only PyTorch.
++
++The convention is the FIRST TWO ROWS of a rotation matrix, not its columns.
++Leading batch dimensions, dtype, device and autograd are preserved.
++"""
++import torch
++import torch.nn.functional as F
++
++
++def matrix_to_rotation_6d(matrix: torch.Tensor) -> torch.Tensor:
++    """Convert (..., 3, 3) matrices to (..., 6), as in PyTorch3D."""
++    if matrix.shape[-2:] != (3, 3):
++        raise ValueError("Expected rotation matrices with shape (..., 3, 3)")
++    return matrix[..., :2, :].clone().reshape(*matrix.shape[:-2], 6)
++
++
++def rotation_6d_to_matrix(d6: torch.Tensor) -> torch.Tensor:
++    """Convert (..., 6) to (..., 3, 3) using PyTorch3D's Gram-Schmidt rule."""
++    if d6.shape[-1:] != (6,):
++        raise ValueError("Expected 6D rotations with shape (..., 6)")
++    a1, a2 = d6[..., :3], d6[..., 3:]
++    b1 = F.normalize(a1, dim=-1)
++    b2 = a2 - (b1 * a2).sum(-1, keepdim=True) * b1
++    b2 = F.normalize(b2, dim=-1)
++    b3 = torch.cross(b1, b2, dim=-1)
++    return torch.stack((b1, b2, b3), dim=-2)
+diff --git a/utils/smoke.py b/utils/smoke.py
+new file mode 100644
+index 0000000..0032b1d
+--- /dev/null
++++ b/utils/smoke.py
+@@ -0,0 +1,104 @@
++"""Checkpoint-free forward validation; never a treatment prediction/evaluation."""
++import json
++import platform
++from pathlib import Path
++import torch
++
++
++def configure_smoke_dataset(args, config):
++    """Reuse existing case files, with deterministic test loading and batch size 1."""
++    cfg = config.dataset.test
++    root = Path(args.case_root or './case_0').resolve()
++    fields = ('dataroot', 'paramroot', 'before_path', 'after_path', 'file')
++    already_configured = all(Path(str(cfg[key])).exists() for key in fields)
++    if args.case_root or root.is_dir():
++        paths = {
++            'dataroot': root / 'remesh_before',
++            'paramroot': root / 'param_PLACEHOLDER',
++            'before_path': root / 'pcd_before512',
++            'after_path': root / 'pcd_after512_PLACEHOLDER',
++            'file': root / 'case_ids.txt',
++        }
++        for key, fallback in [('paramroot', 'param'), ('after_path', 'pcd_after512')]:
++            if not paths[key].exists():
++                paths[key] = root / fallback
++        missing = [str(path) for path in paths.values() if not path.exists()]
++        if missing:
++            raise FileNotFoundError('Incomplete existing case_0 input: ' + ', '.join(missing))
++        cfg.update({key: str(path) for key, path in paths.items()})
++        cfg.npoint = 512
++    elif not already_configured:
++        raise FileNotFoundError(
++            'Extract the EXISTING tadpm_official_upper_input.zip into this repository '
++            '(creating ./case_0), or pass --case_root PATH. No data is regenerated.'
++        )
++    if cfg.NAME != 'DentalDataset':
++        raise ValueError('Checkpoint-free case smoke test requires DentalDataset')
++    cfg.train = False
++    cfg.bs = 1
++
++
++class SmokeRecorder:
++    """Observe original forward calls and save finite raw slot outputs."""
++    def __init__(self, model, args):
++        self.args = args
++        self.folder = Path(args.experiment_path)
++        self.calls = {'Mesh_encoder': 0, 'Diffusion': 0, 'UViT': 0}
++        self.steps = model.regressor.sampling_timesteps
++        self.batches = []
++        self.handles = []
++        for name, module in [('Mesh_encoder', model.encoder),
++                             ('Diffusion', model.regressor),
++                             ('UViT', model.regressor.model)]:
++            def hook(module, inputs, output, name=name):
++                self.calls[name] += 1
++            self.handles.append(module.register_forward_hook(hook))
++
++    def save(self, index, masks, outputs):
++        expected = (masks.shape[0], 32, 9)
++        if tuple(outputs.shape) != expected:
++            raise RuntimeError(f'Unexpected output shape {tuple(outputs.shape)}; expected {expected}')
++        if not torch.isfinite(outputs).all():
++            raise FloatingPointError('Non-finite TADPM/DDIM output; smoke test FAILED')
++        ids = [int(i) for i in index]
++        filename = f'smoke_batch_{len(self.batches):03d}.pt'
++        torch.save({
++            'case_ids': ids,
++            'outputs': outputs.detach().cpu(),
++            'masks': masks.detach().cpu(),
++            'random_weights': True,
++            'clinical_prediction': False,
++        }, self.folder / filename)
++        self.batches.append({
++            'case_ids': ids, 'file': filename, 'shape': list(outputs.shape),
++            'all_finite': True, 'masks': masks.detach().cpu().tolist(),
++            'output_min': outputs.min().item(), 'output_max': outputs.max().item(),
++        })
++
++    def finish(self):
++        for handle in self.handles:
++            handle.remove()
++        count = len(self.batches)
++        expected = {'Mesh_encoder': 32 * count, 'Diffusion': count,
++                    'UViT': self.steps * count}
++        if not count or self.calls != expected:
++            raise RuntimeError(f'Incomplete forward smoke test: calls={self.calls}, expected={expected}')
++        cuda = self.args.device == 'cuda'
++        report = {
++            'status': 'SMOKE_OK', 'checkpoint': None,
++            'encoder_checkpoint': self.args.encoder_ckpts or None,
++            'random_weights': True, 'clinical_prediction': False,
++            'after_placeholder_is_not_ground_truth': True,
++            'add_metric_computed': False,
++            'platform': platform.platform(), 'python': platform.python_version(),
++            'torch': torch.__version__, 'torch_cuda_build': torch.version.cuda,
++            'device': self.args.device,
++            'gpu': torch.cuda.get_device_name() if cuda else None,
++            'seed': self.args.seed, 'ddim_sampling_timesteps': self.steps,
++            'forward_calls': self.calls, 'batches': self.batches,
++        }
++        (self.folder / 'smoke_report.json').write_text(
++            json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8'
++        )
++        print(f'SMOKE_OK: DentalDataset -> TADPM -> Diffusion/UViT -> DDIM ({self.steps} steps)')
++        print(f'Output/report directory: {self.folder}')

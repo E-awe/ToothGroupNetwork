@@ -1,0 +1,26 @@
+{
+  "official_upstream": "lcshhh/TADPM",
+  "upstream_commit": "92967a68191846ab38dcdb2ae7914e19ecd0d396",
+  "compat_commit": "3523d8e1db6a9136e3224165d68f5f1a6a478599",
+  "model_state_tensor_count": 628,
+  "model_parameter_count": 181705301,
+  "device": "meta",
+  "gpu_allocated": false,
+  "model_forward_executed": false,
+  "ddim_executed": false,
+  "checkpoint_found": false,
+  "checkpoint_search_scope": "cloud workspace and uploaded CASE0001; Windows D: is not accessible",
+  "excluded_non_checkpoint_files": [
+    "case_0/reports/loader_smoke_only.pt",
+    "smoke_batch_000.pt",
+    "TGNet checkpoint_manifest.json lists h5 but contains no TADPM weights"
+  ],
+  "full_checkpoint_required": true,
+  "meshmae_only_checkpoint_sufficient": false,
+  "before_only_prediction_supported_by_eval_model": true,
+  "default_test_entry": "main.py --test -> runners.test_tadpm.test_tadpm -> builder.dataset_builder -> TADPM -> diffusion.eval -> ddim_sample",
+  "default_checkpoint_test_computes_after_based_ADD": true,
+  "provided_prediction_only_wrapper": "predict_before_only.py, default check only, explicit --run required",
+  "prediction_wrapper_execution_status": "not executed; no trained checkpoint",
+  "clinical_confirmed": false
+}
