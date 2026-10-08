@@ -53,8 +53,11 @@ def check_checkpoint(repo, path):
         raise ValueError(f'Not a complete matching TADPM checkpoint: missing={missing}, unexpected={unexpected}, shapes={wrong}')
     if not all(torch.isfinite(t).all().item() for t in state.values() if t.is_floating_point()):
         raise ValueError('Checkpoint contains non-finite values')
+    hasher = hashlib.sha256()
     with path.open('rb') as f:
-        digest = hashlib.file_digest(f,'sha256').hexdigest()
+        for chunk in iter(lambda: f.read(1024*1024),b''):
+            hasher.update(chunk)
+    digest = hasher.hexdigest()
     return dict(provided=True,path=str(path),sha256=digest,full_key_shape_match=True,
         tensor_count=len(state),training_provenance_verified=False,
         trained_weights_confirmed=False,
